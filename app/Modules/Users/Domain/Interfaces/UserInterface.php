@@ -2,14 +2,19 @@
 
 namespace App\Modules\Users\Domain\Interfaces;
 
+use App\Modules\Users\Domain\Entity\User;
+
 interface UserInterface
 {
-    public function get(): array;
+    public function findById(int $id): ?User;
 
-    public function getAll(): array;
+    /**
+     * @return User[]
+     **/
+    public function getAll(): ?array;
 
-    public function edit(): bool;
+    public function edit(int $id,  User $data): bool;
 
-    public function delete(): bool;
+    public function delete(int $id): bool;
 
 }
