@@ -2,12 +2,14 @@
 
 namespace App\Modules\Users\Domain\Entity;
 
+use App\Modules\Users\Application\DTO\UserDTO;
+
 class User
 {
     private int $id;
     private string $name;
     private string $email;
-    private string $password;
+    private ?string $password;
 
     public function __construct(int $id, string $name, string $email, ?string $password = null)
     {
@@ -37,4 +39,12 @@ class User
         return $this->password;
     }
 
+    public function toDTO() {
+        return new UserDTO(
+            id: $this->id,
+            name: $this->name,
+            email: $this->email,
+            password: $this->password
+        );
+    }
 }

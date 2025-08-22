@@ -1,21 +1,27 @@
-<?php
+<?php 
+
+
 
 namespace App\Modules\Users\Infrastructure\Repository;
 
+use App\Modules\Users\Application\DTO\UserDTO;
 use App\Modules\Users\Domain\Exceptions\Exceptions;
 use App\Modules\Users\Domain\Interfaces\UserInterface;
+// use Illuminate\Database\DatabaseManager as DB;
 use Illuminate\Support\Facades\DB;
 use App\Modules\Users\Domain\Entity\User;
 
 class UserRepository implements UserInterface {
 
-    public function __construct(private DB $db) {}
+    public function __construct(private DB $db) {
+        $this->db = $db;
+    }
 
     public function findById(int $id): ?User {
 
         try {
             $user = $this->db::table('users')->where('id', $id)->first();
-
+           
             if (!$user) {
                 return null;
             }
@@ -46,13 +52,29 @@ class UserRepository implements UserInterface {
                 name: $user->name,
                 email: $user->email,
             ))->toArray();
+            
             return $entity;
         } catch (\Exception $e) {
+           
             return null;
         }
     }
 
-    public function edit(int $id, User $data): bool {
+    public function create(UserDTO $user): ?bool {
+        try {
+            // dd($this->db->);
+            $data = $this->db::table('users')->insert([
+                'name' => $user->name,
+                'email' => $user->email,
+                'password' => $user->password,
+            ]);
+            return true;
+        } catch (\Exception $th) {
+            return null;
+        }
+    }
+
+    public function edit(int $id, UserDTO $data): bool {
         try {
             $this->db::table('users')->where('id', $id)->update([
                 'name' => $data->getName(),

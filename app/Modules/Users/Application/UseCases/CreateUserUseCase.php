@@ -6,7 +6,7 @@ use App\Modules\Users\Application\DTO\UserDTO;
 use App\Modules\Users\Domain\Entity\User;
 use App\Modules\Users\Domain\Interfaces\UserInterface;
 
-class FindByIdUseCase
+class CreateUserUseCase
 {
    
 
@@ -15,11 +15,11 @@ class FindByIdUseCase
         
     }
 
-    public function execute(int $id): ?UserDTO
+    public function execute(UserDTO $userDTO): ?bool
     {
-        $user = $this->userRepository->findById($id);
-        return $user?->toDTO();
-    }
+        $created = $this->userRepository->create($userDTO);
+        return $created;
+    } 
 
 }
 
