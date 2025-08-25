@@ -10,6 +10,7 @@ use App\Modules\Users\Application\UseCases\GetAllUsersUseCase;
 use App\Modules\Users\Application\UseCases\CreateUserUseCase;
 use App\Modules\Users\Application\UseCases\UpdateUserUseCase;
 use App\Modules\Users\Domain\Exceptions\Exceptions;
+use App\Modules\Users\Http\Requests\UserRequest;
 use Hash;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -43,7 +44,7 @@ class UserController extends Controller {
         return response()->json(['message' => 'User not found', 'status' => 'user_not_found'], 404);
     }
 
-    public function store(Request $request) {
+    public function store(UserRequest $request) {
         
         $user = new UserDTO(
             id: null,
