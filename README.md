@@ -13,14 +13,23 @@ A RESTful API for managing users built with Laravel.
 
 1. Clone the repository
 ```bash
-git clone [<repository-url>](https://github.com/ededias/backend-ummense.git)
+git clone https://github.com/ededias/backend-ummense.git
 cd backend-ummense
-
 ```
 
 2. Start the application using Docker
 ```bash
 docker compose up -d --build
+```
+
+5. to to run migrations
+```bash
+docker exec -it laravel_app php artisan migrate
+```
+
+5. to create admin user and uses the api
+```bash
+docker exec -it laravel_app php artisan db:seed
 ```
 
 The API will be available at `http://localhost:8000` (or your configured port).
@@ -29,26 +38,74 @@ The API will be available at `http://localhost:8000` (or your configured port).
 
 ### Base URL
 ```
-http://localhost:8000/api/users
+http://localhost:8000/api
 ```
 
-### Endpoints Overview
+### Authentication Endpoints
 
 | Method | Endpoint | Description |
 |--------|----------|-------------|
-| GET    | `/`      | Get all users |
-| GET    | `/{id}`  | Get user by ID |
-| POST   | `/`      | Create new user |
-| PUT    | `/{id}`  | Update user by ID |
-| DELETE | `/{id}`  | Delete user by ID |
+| POST   | `/login` | User authentication |
+
+### User Management Endpoints
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET    | `/users` | Get all users |
+| GET    | `/users/{id}` | Get user by ID |
+| POST   | `/users` | Create new user |
+| PUT    | `/users/{id}` | Update user by ID |
+| DELETE | `/users/{id}` | Delete user by ID |
 
 ---
 
 ## 📝 API Documentation
 
-### 1. Get All Users
+### Authentication
+
+#### 1. User Login
 ```http
-GET /
+POST /login
+```
+
+**Request Body:**
+```json
+{
+  "email": "test@gmail.com",
+  "password": "123456"
+}
+```
+
+**Required Fields:**
+- `email` (string) - User's email address
+- `password` (string) - User's password
+
+**Success Response:**
+```json
+{
+  "token": "1|5Hnb5goj8IvQXCPDqxazmwbQMgAO9k1hPxJJxp2Z50f7e930"
+}
+```
+
+**Error Response (Invalid Credentials):**
+```json
+{
+  "message": "Invalid credentials"
+}
+```
+
+---
+
+### User Management
+
+⚠️ **Note:** All user management endpoints require authentication. Include the token in the Authorization header:
+```
+Authorization: Bearer 1|5Hnb5goj8IvQXCPDqxazmwbQMgAO9k1hPxJJxp2Z50f7e930
+```
+
+#### 1. Get All Users
+```http
+GET /users
 ```
 
 **Response:**
@@ -56,16 +113,16 @@ GET /
 [
   {
     "id": 1,
-    "name": "Test Test",
+    "name": "Test test",
     "email": "test@gmail.com",
-    "password": null
+    "password: null,
   }
 ]
 ```
 
-### 2. Get User by ID
+#### 2. Get User by ID
 ```http
-GET /{id}
+GET /users/{id}
 ```
 
 **Parameters:**
@@ -74,16 +131,16 @@ GET /{id}
 **Response:**
 ```json
 {
-  "id": 1,
-  "name": "Test test",
-  "email": "test@gmail.com",
-  "password": null
+   "id": 1,
+   "name": "Test test",
+   "email": "test@gmail.com",
+   "password: null,
 }
 ```
 
-### 3. Create New User
+#### 3. Create New User
 ```http
-POST /
+POST /users
 ```
 
 **Request Body:**
@@ -103,14 +160,16 @@ POST /
 **Response:**
 ```json
 {
-  "message": "User created successfully",
-  "status": "user_created"
+  "id": 1,
+  "name": "Test test",
+  "email": "test@gmail.com",
+  "password: null,
 }
 ```
 
-### 4. Update User
+#### 4. Update User
 ```http
-PUT /{id}
+PUT /users/{id}
 ```
 
 **Parameters:**
@@ -133,14 +192,16 @@ PUT /{id}
 **Response:**
 ```json
 {
-  "message": "User updated successfully",
-  "status": "user_updated"
+  "id": 1,
+  "name": "Edenilson",
+  "email": "edenilson@gmail.com",
+  "password": null
 }
 ```
 
-### 5. Delete User
+#### 5. Delete User
 ```http
-DELETE /{id}
+DELETE /users/{id}
 ```
 
 **Parameters:**
@@ -149,8 +210,7 @@ DELETE /{id}
 **Response:**
 ```json
 {
-  "message": "User deleted successfully",
-  "status": "user_deleted"
+  "message": "User deleted successfully"
 }
 ```
 
@@ -160,6 +220,7 @@ DELETE /{id}
 |-------------|-------------|
 | 200 | OK - Request successful |
 | 201 | Created - User created successfully |
+| 401 | Unauthorized - Invalid or missing authentication token |
 | 404 | Not Found - User not found |
 | 422 | Unprocessable Entity - Validation errors |
 | 500 | Internal Server Error |
@@ -177,40 +238,55 @@ DELETE /{id}
 
 ### Using cURL
 
-**Get all users:**
+**Login:**
 ```bash
-curl -X GET http://localhost:8000/api/users
+curl -X POST http://localhost:8000/api/login \
+  -H "Content-Type: application/json" \
+  -d '{
+    "email": "edenilson@gmail.com",
+    "password": "123456"
+  }'
 ```
 
-**Create a user:**
+**Get all users (with authentication):**
+```bash
+curl -X GET http://localhost:8000/api/users \
+  -H "Authorization: Bearer 1|5Hnb5goj8IvQXCPDqxazmwbQMgAO9k1hPxJJxp2Z50f7e930"
+```
+
+**Create a user (with authentication):**
 ```bash
 curl -X POST http://localhost:8000/api/users \
   -H "Content-Type: application/json" \
+  -H "Authorization: Bearer 1|5Hnb5goj8IvQXCPDqxazmwbQMgAO9k1hPxJJxp2Z50f7e930" \
   -d '{
-    "name": Test test",
+    "name": "Test test",
     "email": "test@gmail.com",
     "password": "123456"
   }'
 ```
 
-**Update a user:**
+**Update a user (with authentication):**
 ```bash
 curl -X PUT http://localhost:8000/api/users/1 \
   -H "Content-Type: application/json" \
+  -H "Authorization: Bearer 1|5Hnb5goj8IvQXCPDqxazmwbQMgAO9k1hPxJJxp2Z50f7e930" \
   -d '{
-    "name": "Test Updated",
+    "name": "test Updated",
     "email": "test.updated@gmail.com"
   }'
 ```
 
-**Delete a user:**
+**Delete a user (with authentication):**
 ```bash
-curl -X DELETE http://localhost:8000/api/users/1
+curl -X DELETE http://localhost:8000/api/users/1 \
+  -H "Authorization: Bearer 1|5Hnb5goj8IvQXCPDqxazmwbQMgAO9k1hPxJJxp2Z50f7e930"
 ```
+
 
 ### Running Tests
 ```bash
-docker compose exec app php artisan test
+docker exec -it laravel_app php artisan test
 ```
 
 ### Stopping the Application
@@ -220,7 +296,11 @@ docker compose down
 
 ## 📝 Notes
 
+- The API uses token-based authentication (likely Laravel Sanctum)
+- Login first to get an authentication token
+- Include the token in the `Authorization: Bearer {token}` header for all user management requests
 - All endpoints expect and return JSON data
 - Make sure to set `Content-Type: application/json` header for POST and PUT requests
 - Passwords are automatically hashed when creating or updating users
 - Email addresses must be unique in the system
+- Tokens don't expire automatically but can be revoked
