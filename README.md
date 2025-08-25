@@ -1,61 +1,225 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# User API
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+A RESTful API for managing users built with Laravel.
 
-## About Laravel
+## 🚀 Getting Started
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+### Prerequisites
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+- Docker
+- Docker Compose
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+### Installation
 
-## Learning Laravel
+1. Clone the repository
+```bash
+git clone <repository-url>
+cd <project-directory>
+```
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+2. Start the application using Docker
+```bash
+docker compose up -d --build
+```
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+The API will be available at `http://localhost:8000` (or your configured port).
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## 📋 API Endpoints
 
-## Laravel Sponsors
+### Base URL
+```
+http://localhost:8000/api/users
+```
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+### Endpoints Overview
 
-### Premium Partners
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET    | `/`      | Get all users |
+| GET    | `/{id}`  | Get user by ID |
+| POST   | `/`      | Create new user |
+| PUT    | `/{id}`  | Update user by ID |
+| DELETE | `/{id}`  | Delete user by ID |
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+---
 
-## Contributing
+## 📝 API Documentation
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+### 1. Get All Users
+```http
+GET /
+```
 
-## Code of Conduct
+**Response:**
+```json
+[
+  {
+    "id": 1,
+    "name": "Test Test",
+    "email": "test@gmail.com",
+    "password": null
+  }
+]
+```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+### 2. Get User by ID
+```http
+GET /{id}
+```
 
-## Security Vulnerabilities
+**Parameters:**
+- `id` (integer, required) - User ID
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+**Response:**
+```json
+{
+  "id": 1,
+  "name": "Test test",
+  "email": "test@gmail.com",
+  "password": null
+}
+```
 
-## License
+### 3. Create New User
+```http
+POST /
+```
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+**Request Body:**
+```json
+{
+  "name": "Test test",
+  "email": "test@gmail.com",
+  "password": "123456"
+}
+```
+
+**Required Fields:**
+- `name` (string) - User's full name
+- `email` (string) - User's email address
+- `password` (string) - User's password
+
+**Response:**
+```json
+{
+  "message": "User created successfully",
+  "status": "user_created"
+}
+```
+
+### 4. Update User
+```http
+PUT /{id}
+```
+
+**Parameters:**
+- `id` (integer, required) - User ID
+
+**Request Body:**
+```json
+{
+  "name": "Edenilson",
+  "email": "edenilson@gmail.com",
+  "password": "123456"
+}
+```
+
+**Fields (all optional for update):**
+- `name` (string) - User's full name
+- `email` (string) - User's email address
+- `password` (string) - User's password
+
+**Response:**
+```json
+{
+  "message": "User updated successfully",
+  "status": "user_updated"
+}
+```
+
+### 5. Delete User
+```http
+DELETE /{id}
+```
+
+**Parameters:**
+- `id` (integer, required) - User ID
+
+**Response:**
+```json
+{
+  "message": "User deleted successfully",
+  "status": "user_deleted"
+}
+```
+
+## 📊 HTTP Status Codes
+
+| Status Code | Description |
+|-------------|-------------|
+| 200 | OK - Request successful |
+| 201 | Created - User created successfully |
+| 404 | Not Found - User not found |
+| 422 | Unprocessable Entity - Validation errors |
+| 500 | Internal Server Error |
+
+## 🔧 Error Response Format
+
+```json
+{
+  "error": "Error message",
+  "details": "Detailed error information"
+}
+```
+
+## 📋 Example Usage
+
+### Using cURL
+
+**Get all users:**
+```bash
+curl -X GET http://localhost:8000/api/users
+```
+
+**Create a user:**
+```bash
+curl -X POST http://localhost:8000/api/users \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": Test test",
+    "email": "test@gmail.com",
+    "password": "123456"
+  }'
+```
+
+**Update a user:**
+```bash
+curl -X PUT http://localhost:8000/api/users/1 \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Test Updated",
+    "email": "test.updated@gmail.com"
+  }'
+```
+
+**Delete a user:**
+```bash
+curl -X DELETE http://localhost:8000/api/users/1
+```
+
+### Running Tests
+```bash
+docker compose exec app php artisan test
+```
+
+### Stopping the Application
+```bash
+docker compose down
+```
+
+## 📝 Notes
+
+- All endpoints expect and return JSON data
+- Make sure to set `Content-Type: application/json` header for POST and PUT requests
+- Passwords are automatically hashed when creating or updating users
+- Email addresses must be unique in the system
