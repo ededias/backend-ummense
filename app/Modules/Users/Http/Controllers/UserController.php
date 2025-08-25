@@ -10,6 +10,7 @@ use App\Modules\Users\Application\UseCases\GetAllUsersUseCase;
 use App\Modules\Users\Application\UseCases\CreateUserUseCase;
 use App\Modules\Users\Application\UseCases\UpdateUserUseCase;
 use App\Modules\Users\Domain\Exceptions\Exceptions;
+use Hash;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -48,7 +49,7 @@ class UserController extends Controller {
             id: null,
             name: $request->input('name'),
             email: $request->input('email'),
-            password: $request->input('password')
+            password: Hash::make($request->input('password'))
         );
 
         $data = $this->createUserUseCase->execute($user);
