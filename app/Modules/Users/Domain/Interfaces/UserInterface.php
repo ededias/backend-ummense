@@ -16,7 +16,7 @@ interface UserInterface
 
     public function create(UserDTO $data): ?bool;
 
-    public function edit(int $id,  UserDTO $data): ?bool;
+    public function update(int $id,  UserDTO $data): ?bool;
 
     public function delete(int $id): bool;
 

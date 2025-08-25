@@ -74,13 +74,14 @@ class UserRepository implements UserInterface {
         }
     }
 
-    public function edit(int $id, UserDTO $data): bool {
+    public function update(int $id, UserDTO $data): bool {
         try {
             $this->db::table('users')->where('id', $id)->update([
-                'name' => $data->getName(),
-                'email' => $data->getEmail(),
-                'password' => $data->getPassword(),
+                'name' => $data->name,
+                'email' => $data->email,
+                'password' => $data->password,
             ]);
+            
             return true;
         } catch (\Exception $e) {
             return false;

@@ -7,6 +7,7 @@ use App\Modules\Users\Application\DTO\UserDTO;
 use App\Modules\Users\Application\UseCases\FindByIdUseCase;
 use App\Modules\Users\Application\UseCases\GetAllUsersUseCase;
 use App\Modules\Users\Application\UseCases\CreateUserUseCase;
+use App\Modules\Users\Application\UseCases\UpdateUserUseCase;
 use App\Modules\Users\Domain\Exceptions\Exceptions;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -18,6 +19,7 @@ class UserController extends Controller {
         private FindByIdUseCase $findByIdUseCase,
         private GetAllUsersUseCase $getAll,
         private CreateUserUseCase $createUserUseCase,
+        private UpdateUserUseCase $updateUserUseCase
     )
     {}
 
@@ -55,7 +57,18 @@ class UserController extends Controller {
     }
 
     public function update(Request $request, $id) {
-        throw new Exceptions('method not implemented');
+         $user = new UserDTO(
+            id: $id,
+            name: $request->input('name'),
+            email: $request->input('email'),
+            password: $request->input('password')
+        );
+
+        $data = $this->updateUserUseCase->execute(user: $user, id: $id);
+        if ($data) {
+            return response()->json(['message' => 'User updated successfully', 'status' => 'user_updated'], 200);
+        }
+        return response()->json(['message' => 'Failed to update user', 'status' => 'user_update_failed'], 400);
     }
 
     public function destroy($id) {
