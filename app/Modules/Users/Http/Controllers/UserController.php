@@ -4,6 +4,7 @@ namespace App\Modules\Users\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Modules\Users\Application\DTO\UserDTO;
+use App\Modules\Users\Application\UseCases\DeleteUserUseCase;
 use App\Modules\Users\Application\UseCases\FindByIdUseCase;
 use App\Modules\Users\Application\UseCases\GetAllUsersUseCase;
 use App\Modules\Users\Application\UseCases\CreateUserUseCase;
@@ -19,7 +20,8 @@ class UserController extends Controller {
         private FindByIdUseCase $findByIdUseCase,
         private GetAllUsersUseCase $getAll,
         private CreateUserUseCase $createUserUseCase,
-        private UpdateUserUseCase $updateUserUseCase
+        private UpdateUserUseCase $updateUserUseCase,
+        private DeleteUserUseCase $deleteUserUseCase,
     )
     {}
 
@@ -57,7 +59,7 @@ class UserController extends Controller {
     }
 
     public function update(Request $request, $id) {
-         $user = new UserDTO(
+        $user = new UserDTO(
             id: $id,
             name: $request->input('name'),
             email: $request->input('email'),
@@ -72,6 +74,14 @@ class UserController extends Controller {
     }
 
     public function destroy($id) {
-        throw new Exceptions('method not implemented');
+        try {
+            $data = $this->deleteUserUseCase->execute($id);
+            if ($data) {
+                return response()->json(['message' => 'User deleted successfully', 'status' => 'user_deleted'], 200);
+            }
+            return response()->json(['message' => 'Failed to delete user', 'status' => 'user_deletion_failed'], 400);
+        } catch (Exceptions $e) {
+            return response()->json(['message' => $e->getMessage(), 'status' => 'user_deletion_failed'], 400);
+        }
     }
 }
