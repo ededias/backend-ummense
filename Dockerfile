@@ -29,5 +29,5 @@ RUN chmod -R 777 storage bootstrap/cache
 # Expõe a porta que o Railway vai usar
 EXPOSE 8080
 
-# Comando para iniciar o Laravel
-CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=8080"]
+# CMD usando a variável de ambiente PORT do Railway
+CMD php artisan serve --host=0.0.0.0 --port=$PORT
