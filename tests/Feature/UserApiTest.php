@@ -1,8 +1,15 @@
 <?php
 
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);
+
+beforeEach(function () {
+    // Create an authenticated user for all tests
+    $this->authenticatedUser = User::factory()->create();
+    $this->actingAs($this->authenticatedUser);
+});
 
 it('gets all users', function () {
     // First, create a user via the API
@@ -15,28 +22,30 @@ it('gets all users', function () {
     $this->postJson('/api/users', $payload);
 
     $response = $this->getJson('/api/users');
-
+    
     $response->assertStatus(200)
         ->assertJsonFragment(['email' => 'test@gmail.com']);
 });
 
 it('gets a user by id', function () {
-    $payload = [
+    // Create user directly in database since API doesn't return ID
+    $user = User::create([
         'name' => 'Test test',
         'email' => 'test@gmail.com',
-        'password' => '123456',
-        'password_confirmation' => '123456'
-    ];
-    $createResponse = $this->postJson('/api/users', $payload);
-    $createResponse->assertStatus(201);
+        'password' => bcrypt('123456')
+    ]);
 
-    $userId = $createResponse->json('id') ?? 1; // fallback if not returned
-
-    $response = $this->getJson("/api/users/{$userId}");
+    $response = $this->getJson("/api/users/{$user->id}");
 
     $response->assertStatus(200)
-        ->assertJsonFragment(['email' => 'test@gmail.com']);
+        ->assertJson([
+            'id' => $user->id,
+            'name' => 'Test test',
+            'email' => 'test@gmail.com'
+        ]);
 });
+
+
 
 it('creates a user', function () {
     $payload = [
@@ -56,16 +65,12 @@ it('creates a user', function () {
 });
 
 it('updates a user', function () {
-    $payload = [
+    // Create user directly in database since API doesn't return ID
+    $user = User::create([
         'name' => 'Test test',
         'email' => 'test@gmail.com',
-        'password' => '123456',
-        'password_confirmation' => '123456'
-    ];
-    $createResponse = $this->postJson('/api/users', $payload);
-    $createResponse->assertStatus(201);
-
-    $userId = $createResponse->json('id') ?? 1;
+        'password' => bcrypt('123456')
+    ]);
 
     $updatePayload = [
         'name' => 'Edenilson',
@@ -74,7 +79,7 @@ it('updates a user', function () {
         'password_confirmation' => '123456'
     ];
 
-    $response = $this->putJson("/api/users/{$userId}", $updatePayload);
+    $response = $this->putJson("/api/users/{$user->id}", $updatePayload);
 
     $response->assertStatus(200)
         ->assertJsonFragment([
@@ -84,18 +89,14 @@ it('updates a user', function () {
 });
 
 it('deletes a user', function () {
-    $payload = [
+    // Create user directly in database since API doesn't return ID
+    $user = User::create([
         'name' => 'Test test',
         'email' => 'test@gmail.com',
-        'password' => '123456',
-        'password_confirmation' => '123456'
-    ];
-    $createResponse = $this->postJson('/api/users', $payload);
-    $createResponse->assertStatus(201);
+        'password' => bcrypt('123456')
+    ]);
 
-    $userId = $createResponse->json('id') ?? 1;
-
-    $response = $this->deleteJson("/api/users/{$userId}");
+    $response = $this->deleteJson("/api/users/{$user->id}");
 
     $response->assertStatus(200)
         ->assertJsonFragment([
@@ -122,4 +123,14 @@ it('validates user creation', function () {
     
     $response->assertStatus(422)
         ->assertJsonStructure(['message', 'errors']);
+});
+
+// Additional test for authentication requirements
+it('requires authentication to access users endpoint', function () {
+    // Create a new test instance without authentication
+    $this->app->make('auth')->forgetGuards();
+    
+    $response = $this->getJson('/api/users');
+    
+    $response->assertStatus(401); // or whatever your auth middleware returns
 });
