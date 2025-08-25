@@ -13,8 +13,9 @@ A RESTful API for managing users built with Laravel.
 
 1. Clone the repository
 ```bash
-git clone <repository-url>
-cd <project-directory>
+git clone [<repository-url>](https://github.com/ededias/backend-ummense.git)
+cd backend-ummense
+
 ```
 
 2. Start the application using Docker
