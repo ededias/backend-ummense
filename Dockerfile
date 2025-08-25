@@ -2,12 +2,7 @@ FROM php:8.2-cli
 
 # Instala dependências do sistema
 RUN apt-get update && apt-get install -y \
-    libpng-dev \
-    libjpeg-dev \
-    libfreetype6-dev \
-    libzip-dev \
-    unzip \
-    git \
+    libpng-dev libjpeg-dev libfreetype6-dev libzip-dev unzip git \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install gd zip pdo pdo_mysql
 
@@ -30,4 +25,4 @@ RUN chmod -R 777 storage bootstrap/cache
 EXPOSE 8080
 
 # CMD usando a variável de ambiente PORT do Railway
-CMD php artisan serve --host=0.0.0.0 --port=$PORT
+CMD php artisan serve --host=0.0.0.0 --port=8080
