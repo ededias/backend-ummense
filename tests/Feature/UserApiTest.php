@@ -10,6 +10,7 @@ it('gets all users', function () {
         'name' => 'Test Test',
         'email' => 'test@gmail.com',
         'password' => '123456',
+        'password_confirmation' => '123456'
     ];
     $this->postJson('/api/users', $payload);
 
@@ -24,6 +25,7 @@ it('gets a user by id', function () {
         'name' => 'Test test',
         'email' => 'test@gmail.com',
         'password' => '123456',
+        'password_confirmation' => '123456'
     ];
     $createResponse = $this->postJson('/api/users', $payload);
     $createResponse->assertStatus(201);
@@ -41,6 +43,7 @@ it('creates a user', function () {
         'name' => 'Test test',
         'email' => 'test@gmail.com',
         'password' => '123456',
+        'password_confirmation' => '123456'
     ];
 
     $response = $this->postJson('/api/users', $payload);
@@ -57,6 +60,7 @@ it('updates a user', function () {
         'name' => 'Test test',
         'email' => 'test@gmail.com',
         'password' => '123456',
+        'password_confirmation' => '123456'
     ];
     $createResponse = $this->postJson('/api/users', $payload);
     $createResponse->assertStatus(201);
@@ -67,6 +71,7 @@ it('updates a user', function () {
         'name' => 'Edenilson',
         'email' => 'edenilson@gmail.com',
         'password' => '123456',
+        'password_confirmation' => '123456'
     ];
 
     $response = $this->putJson("/api/users/{$userId}", $updatePayload);
@@ -83,6 +88,7 @@ it('deletes a user', function () {
         'name' => 'Test test',
         'email' => 'test@gmail.com',
         'password' => '123456',
+        'password_confirmation' => '123456'
     ];
     $createResponse = $this->postJson('/api/users', $payload);
     $createResponse->assertStatus(201);
@@ -113,7 +119,7 @@ it('validates user creation', function () {
     ];
 
     $response = $this->postJson('/api/users', $payload);
-
+    
     $response->assertStatus(422)
-        ->assertJsonStructure(['error', 'details']);
+        ->assertJsonStructure(['message', 'errors']);
 });
